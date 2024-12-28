@@ -22,9 +22,17 @@ passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 redis = "^5.2.1"
 jsonpickle = "^4.0.1"
 
+[tool.poetry.group.test.dependencies]
+pytest = "^8.3.4"
+pytest-asyncio = "^0.25.0"
+pytest-mock = "^3.14.0"
+pytest-cov = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 package-mode = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
