@@ -8,6 +8,17 @@ from src.database.models import Contact, User
 from src.schemas import ContactBase, ContactUpdate
 
 class ContactRepository:
+    """
+    Repository for handling contact-related database operations.
+
+    Methods:
+    - get_contacts(skip: int, limit: int, query: str | None, user: User) -> List[Contact]: Get a list of contacts.
+    - get_upcoming_birthdays(user: User) -> List[Contact]: Get a list of contacts with upcoming birthdays.
+    - get_contact_by_id(contact_id: int, user: User) -> Contact | None: Get a contact by ID.
+    - create_contact(body: ContactBase, user: User) -> Contact: Create a new contact.
+    - remove_contact(contact_id: int, user: User) -> Contact | None: Remove a contact.
+    - update_contact(contact_id: int, body: ContactUpdate, user: User) -> Contact | None: Update a contact.
+    """
     def __init__(self, session: AsyncSession):
         self.db = session
 

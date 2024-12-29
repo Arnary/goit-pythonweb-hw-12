@@ -15,6 +15,13 @@ from src.services.users import UserService
 from src.database.models import User, UserRole
 
 class Hash:
+    """
+    Class to handle password hashing and verification.
+
+    Methods:
+    - verify_password(plain_password, hashed_password): Verify a plain password against a hashed password.
+    - get_password_hash(password: str): Get the hashed version of a password.
+    """
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
     def verify_password(self, plain_password, hashed_password):
@@ -26,6 +33,16 @@ class Hash:
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 async def create_access_token(data: dict, expires_delta: Optional[int] = None):
+    """
+    Create an access token for authentication.
+
+    Args:
+    - data: Data to be encoded in the token.
+    - expires_delta: Expiry duration for the token.
+
+    Returns:
+    - str: Encoded JWT token.
+    """
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(UTC) + timedelta(seconds=expires_delta)
@@ -40,6 +57,16 @@ async def create_access_token(data: dict, expires_delta: Optional[int] = None):
 async def get_current_user(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
+    """
+    Get the current user based on the provided token.
+
+    Args:
+    - token: JWT token for authentication.
+    - db: Database session.
+
+    Returns:
+    - User: Current user object.
+    """
     r = redis.Redis(host='localhost', port=6379, db=0)
 
     credentials_exception = HTTPException(
@@ -70,6 +97,15 @@ async def get_current_user(
     return jsonpickle.decode(user)
 
 def create_email_token(data: dict):
+    """
+    Create a token for email verification.
+
+    Args:
+    - data: Data to be encoded in the token.
+
+    Returns:
+    - str: Encoded JWT token.
+    """
     to_encode = data.copy()
     expire = datetime.now(UTC) + timedelta(days=7)
     to_encode.update({"iat": datetime.now(UTC), "exp": expire})
@@ -78,6 +114,15 @@ def create_email_token(data: dict):
     return token
 
 async def get_email_from_token(token: str):
+    """
+    Get the email from the provided token.
+
+    Args:
+    - token: JWT token for email verification.
+
+    Returns:
+    - str: Email extracted from the token.
+    """
     try:
         payload = jwt.decode(
             token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM]
@@ -91,6 +136,15 @@ async def get_email_from_token(token: str):
         )
 
 def get_current_admin_user(current_user: User = Depends(get_current_user)):
+    """
+    Get the current user if they are an admin.
+
+    Args:
+    - current_user: Current user object.
+
+    Returns:
+    - User: Current admin user.
+    """
     if current_user.role != UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Недостатньо прав доступу")
     return current_user

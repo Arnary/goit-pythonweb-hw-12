@@ -18,6 +18,16 @@ limiter = Limiter(key_func=get_remote_address)
 )
 @limiter.limit("10/minute")
 async def me(request: Request, user: User = Depends(get_current_user)):
+    """
+    Get the current user details.
+
+    Parameters:
+    - request (Request): FastAPI Request object.
+    - user (User): Current user details.
+
+    Returns:
+    - User: Details of the current user.
+    """
     return user
 
 @router.patch("/avatar", response_model=User, description="For admins only")
@@ -26,6 +36,17 @@ async def update_avatar_user(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    Update the user's avatar.
+
+    Parameters:
+    - file (UploadFile): File for the avatar.
+    - user (User): Current user details.
+    - db (AsyncSession): AsyncSession dependency.
+
+    Returns:
+    - User: Updated user details with avatar URL.
+    """
     
     if get_current_admin_user(user):
         avatar_url = UploadFileService(
@@ -39,4 +60,13 @@ async def update_avatar_user(
 
 @router.get("/admin")
 def read_admin(current_user: User = Depends(get_current_admin_user)):
+    """
+    Get admin information.
+
+    Parameters:
+    - current_user (User): Current admin user.
+
+    Returns:
+    - dict: Message with the current admin username.
+    """
     return {"message": f"Вітаємо, {current_user.username}! Це адміністративний маршрут"}

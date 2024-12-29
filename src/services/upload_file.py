@@ -2,6 +2,20 @@ import cloudinary
 import cloudinary.uploader
 
 class UploadFileService:
+    """
+    Service for uploading files to Cloudinary.
+
+    Attributes:
+    - cloud_name: Cloudinary cloud name.
+    - api_key: Cloudinary API key.
+    - api_secret: Cloudinary API secret.
+
+    Methods:
+    - upload_file(file, username) -> str: Upload a file to Cloudinary and return the source URL.
+
+    Static Methods:
+    - None
+    """
     def __init__(self, cloud_name, api_key, api_secret):
         self.cloud_name = cloud_name
         self.api_key = api_key

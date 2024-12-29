@@ -5,6 +5,18 @@ from src.database.models import User
 from src.schemas import UserCreate
 
 class UserRepository:
+    """
+    Repository for handling user-related database operations.
+
+    Methods:
+    - get_user_by_id(user_id: int) -> User | None: Get a user by ID.
+    - get_user_by_username(username: str) -> User | None: Get a user by username.
+    - get_user_by_email(email: str) -> User | None: Get a user by email.
+    - create_user(body: UserCreate, avatar: str = None) -> User: Create a new user.
+    - confirmed_email(email: str) -> None: Confirm email for a user.
+    - update_avatar_url(email: str, url: str) -> User: Update user's avatar URL.
+    - update_password(email: str, new_password) -> None: Update user's password.
+    """
     def __init__(self, session: AsyncSession):
         self.db = session
 

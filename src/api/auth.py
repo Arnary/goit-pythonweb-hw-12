@@ -19,6 +19,18 @@ async def register_user(
     request: Request,
     db: Session = Depends(get_db),
     ):
+    """
+    Register a new user.
+
+    Args:
+        user_data (UserCreate): User data to register.
+        background_tasks (BackgroundTasks): Background tasks to be executed.
+        request (Request): Request object.
+        db (Session, optional): Database session. Defaults to Depends(get_db).
+
+    Returns:
+        User: The newly registered user.
+    """
     user_service = UserService(db)
 
     email_user = await user_service.get_user_by_email(user_data.email)
@@ -46,6 +58,16 @@ async def register_user(
 async def login_user(
     form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
+    """
+    Login a user.
+
+    Args:
+        form_data (OAuth2PasswordRequestForm, optional): Form data for login. Defaults to Depends().
+        db (Session, optional): Database session. Defaults to Depends(get_db).
+
+    Returns:
+        Token: The access token for the logged-in user.
+    """
     r = redis.Redis(host='localhost', port=6379, db=0)
     user_service = UserService(db)
     user = await user_service.get_user_by_username(form_data.username)
@@ -69,6 +91,16 @@ async def login_user(
 
 @router.get("/confirmed_email/{token}")
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
+    """
+    Confirm email for a user.
+
+    Args:
+        token (str): Verification token.
+        db (Session, optional): Database session. Defaults to Depends(get_db).
+
+    Returns:
+        dict: Message confirming email confirmation.
+    """
     email = await get_email_from_token(token)
     user_service = UserService(db)
     user = await user_service.get_user_by_email(email)
@@ -88,6 +120,18 @@ async def request_email(
     request: Request,
     db: Session = Depends(get_db),
 ):
+    """
+    Request email verification.
+
+    Args:
+        body (RequestEmail): Email request data.
+        background_tasks (BackgroundTasks): Background tasks to be executed.
+        request (Request): Request object.
+        db (Session, optional): Database session. Defaults to Depends(get_db).
+
+    Returns:
+        dict: Message confirming email verification request.
+    """
     user_service = UserService(db)
     user = await user_service.get_user_by_email(body.email)
 
@@ -107,6 +151,18 @@ async def request_password_reset(
     request: Request,
     db: Session = Depends(get_db),
 ):
+    """
+    Request a password reset.
+
+    Args:
+        body (RequestEmail): Email request data.
+        background_tasks (BackgroundTasks): Background tasks to be executed.
+        request (Request): Request object.
+        db (Session, optional): Database session. Defaults to Depends(get_db).
+
+    Returns:
+        dict: Message indicating password reset email has been sent.
+    """
     user_service = UserService(db)
     user = await user_service.get_user_by_email(body.email)
 
@@ -128,6 +184,17 @@ async def reset_password_confirm(
     new_password: str,
     db: Session = Depends(get_db),
 ):
+    """
+    Confirm password reset.
+
+    Args:
+        token (str): Reset token.
+        new_password (str): New password.
+        db (Session, optional): Database session. Defaults to Depends(get_db).
+
+    Returns:
+        dict: Message confirming password reset.
+    """
     try:
         email = await get_email_from_token(token)
     except Exception:

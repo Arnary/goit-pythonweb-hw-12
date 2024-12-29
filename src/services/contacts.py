@@ -5,6 +5,17 @@ from src.schemas import ContactBase, ContactUpdate
 from src.database.models import User
 
 class ContactService:
+    """
+    Service for handling contact-related operations.
+
+    Methods:
+    - create_contact(body: ContactBase, user: User): Create a new contact.
+    - get_contacts(skip: int, limit: int, query: str | None, user: User): Get a list of contacts.
+    - get_upcoming_birthdays(user: User): Get upcoming birthdays from contacts.
+    - get_contact(contact_id: int, user: User): Get a specific contact by ID.
+    - update_contact(contact_id: int, body: ContactUpdate, user: User): Update a contact.
+    - remove_contact(contact_id: int, user: User): Remove a contact.
+    """
     def __init__(self, db: AsyncSession):
         self.contact_repository = ContactRepository(db)
 
